@@ -1,0 +1,107 @@
+definitions:
+  structs.SegmentAction:
+    properties:
+      action:
+        type: string
+      slug:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /segment/:
+    post:
+      consumes:
+      - application/json
+      description: Метод создания сегмента. Принимает slug (название) сегмента.
+      parameters:
+      - description: Название сегмента
+        example: '{"slug": "AVITO_DISCOUNT_30"}'
+        in: body
+        name: slug
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Метод создания сегмента.
+      tags:
+      - segment
+  /segment/{slug}:
+    delete:
+      description: Метод удаления сегмента. Принимает slug (название) сегмента.
+      parameters:
+      - description: Название сегмента
+        example: AVITO_DISCOUNT_30
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Метод удаления сегмента.
+      tags:
+      - segment
+  /user/{user_id}/segments:
+    get:
+      description: Метод получения активных сегментов пользователя. Принимает на вход
+        id пользователя.
+      parameters:
+      - description: ID пользователя
+        example: 1000
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Метод получения активных сегментов пользователя.
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: Метод добавления/удаления пользователя в сегмент. Принимает список
+        slug (названий) сегментов которые нужно добавить пользователю, список slug
+        (названий) сегментов которые нужно удалить у пользователя, id пользователя.
+      parameters:
+      - description: ID пользователя
+        example: 1000
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Список сегментов
+        in: body
+        name: segments
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/structs.SegmentAction'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Метод добавления/удаления пользователя в сегмент.
+      tags:
+      - user
+swagger: "2.0"

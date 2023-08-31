@@ -1,0 +1,118 @@
+{
+	"info": {
+		"_postman_id": "eeb8e60d-5d9b-4e87-b94c-e7e7578891be",
+		"name": "segments-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12077727"
+	},
+	"item": [
+		{
+			"name": "/api/v1/segment/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"slug\": \"AVITO_DISCOUNT_30\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/segment/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"segment",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/segment/{slug}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/segment/AVITO_DISCOUNT_30",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"segment",
+						"AVITO_DISCOUNT_30"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/user/{user_id}/segments",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"segments\": [\r\n        {\r\n            \"slug\": \"AVITO_DISCOUNT_30\",\r\n            \"action\": \"add\"\r\n        },\r\n        {\r\n            \"slug\": \"AVITO_PERFORMANCE_VA\",\r\n            \"action\": \"delete\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/user/1001/segments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"1001",
+						"segments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/user/{user_id}/segments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/user/1000/segments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"1000",
+						"segments"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

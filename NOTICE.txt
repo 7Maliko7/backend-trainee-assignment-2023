@@ -1,0 +1,76 @@
+Forms API
+Copyright 2023. 7Maliko7
+
+This product includes software developed by:
+
+github.com/cockroachdb/cockroach-go
+Copyright (с) 2021 Cockroach Labs, Inc. 
+--------------------------------------
+github.com/creasty/defaults
+Copyright (c) 2017-present Yuki Iwanaga
+--------------------------------------
+github.com/go-kit/kit
+Copyright (c) 2015 Peter Bourgon
+--------------------------------------
+github.com/go-playground/validator/v10
+Copyright (c) 2015 Dean Karn
+--------------------------------------
+github.com/gorilla/mux 
+Copyright (c) 2023 The Gorilla Authors. All rights reserved.
+--------------------------------------
+gopkg.in/yaml.v3 
+Copyright (c) 2006-2010 Kirill Simonov
+Copyright (c) 2006-2011 Kirill Simonov
+
+Copyright (c) 2011-2019 Canonical Ltd
+--------------------------------------
+github.com/go-kit/log 
+Copyright (c) 2021 Go kit
+--------------------------------------
+github.com/go-logfmt/logfmt 
+Copyright (c) 2015 go-logfmt
+--------------------------------------
+github.com/go-playground/locales 
+Copyright (c) 2016 Go Playground
+--------------------------------------
+github.com/go-playground/universal-translator 
+Copyright (c) 2016 Go Playground
+--------------------------------------
+github.com/golang/groupcache 
+Copyright 2013 The Go Authors. All rights reserved.
+--------------------------------------
+github.com/golang/protobuf 
+Copyright 2010 The Go Authors. All rights reserved.
+--------------------------------------
+github.com/leodido/go-urn 
+Copyright (c) 2018 Leonardo Di Donato
+--------------------------------------
+github.com/lib/pq 
+Copyright (c) 2011-2013, 'pq' Contributors Portions Copyright (C) 2011 Blake Mizerany
+--------------------------------------
+golang.org/x/crypto
+Copyright 2013 The Go Authors. All rights reserved.
+--------------------------------------
+golang.org/x/net
+Copyright 2013 The Go Authors. All rights reserved.
+--------------------------------------
+golang.org/x/sys
+Copyright 2013 The Go Authors. All rights reserved.
+--------------------------------------
+golang.org/x/text
+Copyright 2013 The Go Authors. All rights reserved.
+--------------------------------------
+google.golang.org/genproto
+Copyright 2013 The Go Authors.  All rights reserved.
+--------------------------------------
+google.golang.org/grpc 
+Copyright 2014 gRPC authors.
+NOTICE
+--------------------------------------
+google.golang.org/protobuf 
+Copyright (c) 2018 The Go Authors. All rights reserved.
+--------------------------------------
+go.opencensus.io
+Copyright 2017, OpenCensus Authors
+
+See LICENSE for terms.

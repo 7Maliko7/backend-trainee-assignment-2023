@@ -1,0 +1,3 @@
+RWDB:
+  connection_string: postgresql://postgres:postgres@localhost:5432/db?sslmode=disable
+listen_address: :8080

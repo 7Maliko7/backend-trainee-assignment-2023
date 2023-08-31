@@ -76,10 +76,11 @@ func main() {
 	{
 		endpoints = transport.MakeEndpoints(svc)
 		endpoints = transport.Endpoints{
-			AddSegment:        oc.ServerEndpoint("Add")(endpoints.AddSegment),
-			DeleteSegment:     oc.ServerEndpoint("Delete")(endpoints.DeleteSegment),
-			UpdateUserSegment: oc.ServerEndpoint("Patch")(endpoints.UpdateUserSegment),
-			GetSegments:       oc.ServerEndpoint("Get")(endpoints.GetSegments),
+			AddSegment:            oc.ServerEndpoint("AddSegment")(endpoints.AddSegment),
+			DeleteSegment:         oc.ServerEndpoint("DeleteSegment")(endpoints.DeleteSegment),
+			UpdateUserSegment:     oc.ServerEndpoint("UpdateUserSegment")(endpoints.UpdateUserSegment),
+			GetSegments:           oc.ServerEndpoint("GetSegments")(endpoints.GetSegments),
+			GetUserSegmentHistory: oc.ServerEndpoint("GetUserSegmentHistory")(endpoints.GetUserSegmentHistory),
 		}
 	}
 

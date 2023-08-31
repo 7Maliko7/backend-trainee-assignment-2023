@@ -11,4 +11,5 @@ type SegmentsService interface {
 	DeleteSegment(ctx context.Context, req structs.DeleteSegmentRequest) (*structs.DeleteSegmentResponse, error)
 	UpdateUserSegment(ctx context.Context, req structs.UpdateUserSegmentRequest) (*structs.UpdateUserSegmentResponse, error)
 	GetSegments(ctx context.Context, req structs.GetSegmentsRequest) (*structs.GetSegmentsResponse, error)
+	GetUserSegmentHistory(ctx context.Context, req structs.GetUserSegmentHistoryRequest) (*structs.GetUserSegmentHistoryResponse, error)
 }

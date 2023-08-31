@@ -152,6 +152,44 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/{user_id}/segments/history/{period}": {
+            "get": {
+                "description": "Метод получения истории изменения сегментов пользователя. Принимает на вход id пользователя и период год-месяц.",
+                "produces": [
+                    "text/csv"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Метод получения истории изменения сегментов пользователя.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1000,
+                        "description": "ID пользователя",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "2023-08",
+                        "description": "период год-месяц",
+                        "name": "period",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

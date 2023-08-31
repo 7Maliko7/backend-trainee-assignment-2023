@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	_ "github.com/cockroachdb/cockroach-go/crdb"
 
@@ -98,4 +99,23 @@ func (repo *Repository) GetSegmentsByUserID(ctx context.Context, id int64) ([]st
 	}
 
 	return segments, nil
+}
+
+func (repo *Repository) GetHistory(ctx context.Context, id int64, dateFrom, dateTo time.Time) ([]db.HistoryAction, error) {
+	rows, err := repo.db.QueryContext(ctx, GetHistroryQuery, id, dateFrom, dateTo)
+	if err != nil {
+		return nil, err
+	}
+
+	actions := make([]db.HistoryAction, 0, 2)
+	for rows.Next() {
+		var ha db.HistoryAction
+		err = rows.Scan(&ha.UserID, &ha.Slug, &ha.Action, &ha.Date)
+		if err != nil {
+			return nil, err
+		}
+		actions = append(actions, ha)
+	}
+
+	return actions, nil
 }

@@ -104,4 +104,31 @@ paths:
       summary: Метод добавления/удаления пользователя в сегмент.
       tags:
       - user
+  /user/{user_id}/segments/history/{period}:
+    get:
+      description: Метод получения истории изменения сегментов пользователя. Принимает
+        на вход id пользователя и период год-месяц.
+      parameters:
+      - description: ID пользователя
+        example: 1000
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: период год-месяц
+        example: 2023-08
+        in: path
+        name: period
+        required: true
+        type: string
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      summary: Метод получения истории изменения сегментов пользователя.
+      tags:
+      - user
 swagger: "2.0"

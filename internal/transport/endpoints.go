@@ -9,18 +9,20 @@ import (
 )
 
 type Endpoints struct {
-	AddSegment        endpoint.Endpoint
-	DeleteSegment     endpoint.Endpoint
-	UpdateUserSegment endpoint.Endpoint
-	GetSegments       endpoint.Endpoint
+	AddSegment            endpoint.Endpoint
+	DeleteSegment         endpoint.Endpoint
+	UpdateUserSegment     endpoint.Endpoint
+	GetSegments           endpoint.Endpoint
+	GetUserSegmentHistory endpoint.Endpoint
 }
 
 func MakeEndpoints(s service.SegmentsService) Endpoints {
 	return Endpoints{
-		AddSegment:        makeAddSegmentEndpoint(s),
-		DeleteSegment:     makeDeleteSegmentEndpoint(s),
-		UpdateUserSegment: makeUpdateUserSegmentEndpoint(s),
-		GetSegments:       makeGetSegmentsEndpoint(s),
+		AddSegment:            makeAddSegmentEndpoint(s),
+		DeleteSegment:         makeDeleteSegmentEndpoint(s),
+		UpdateUserSegment:     makeUpdateUserSegmentEndpoint(s),
+		GetSegments:           makeGetSegmentsEndpoint(s),
+		GetUserSegmentHistory: makeGetUserSegmentHistoryEndpoint(s),
 	}
 }
 
@@ -100,6 +102,27 @@ func makeGetSegmentsEndpoint(s service.SegmentsService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(structs.GetSegmentsRequest)
 		response, err := s.GetSegments(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+		return response, nil
+	}
+}
+
+// /api/v1/user/{user_id}/segments/history/{period}
+//
+//	@Summary		Метод получения истории изменения сегментов пользователя.
+//	@Description	Метод получения истории изменения сегментов пользователя. Принимает на вход id пользователя и период год-месяц.
+//	@Tags			user
+//	@Produce		text/csv
+//	@Param			user_id	path	int	true	"ID пользователя"	example(1000)
+//	@Param			period	path	string	true	"период год-месяц"	example(2023-08)
+//	@Success		200		{file}	file
+//	@Router			/user/{user_id}/segments/history/{period} [GET]
+func makeGetUserSegmentHistoryEndpoint(s service.SegmentsService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(structs.GetUserSegmentHistoryRequest)
+		response, err := s.GetUserSegmentHistory(ctx, req)
 		if err != nil {
 			return nil, err
 		}

@@ -70,7 +70,8 @@ CREATE FUNCTION operations.add_user_link(puser_id bigint, pslug character varyin
     AS $$
 declare
     vResult bigint;
-   vSegment_id bigint;
+    vSegment_id bigint;
+    vAction_id bigint;
 begin
 	select id into vSegment_id
     from segments.list
@@ -93,6 +94,15 @@ begin
     into
         vResult;
 
+    select a.action_id into vAction_id
+    from segments.actions as a
+    where action_name = 'add';
+
+    insert
+    into segments.history
+    (user_id, segment_id, action_id, created_at)
+    values (pUser_id, vSegment_id, vAction_id, now());
+
     return vResult;
 end
 $$;
@@ -113,6 +123,10 @@ begin
 	select id into vSegment_id
     from segments.list
     where slug = pSlug;
+
+    delete
+    from segments.history
+    where segment_id = vSegment_id;
 
 	delete
 	from segments.user_links
@@ -140,8 +154,9 @@ CREATE FUNCTION operations.delete_user_link(puser_id bigint, pslug character var
     LANGUAGE plpgsql
     AS $$
 declare
-vSegment_id bigint;
+    vSegment_id bigint;
     vResult smallint;
+    vAction_id bigint;
 begin
 	select id into vSegment_id
     from segments.list
@@ -154,6 +169,17 @@ begin
 	    returning *
 	)
 	SELECT count(*) FROM deleted into vResult;
+
+    if vResult <> 0 then
+        select a.action_id into vAction_id
+        from segments.actions as a
+        where action_name = 'delete';
+
+        insert
+        into segments.history
+        (user_id, segment_id, action_id, created_at)
+        values (pUser_id, vSegment_id, vAction_id, now());
+    end if;
 
     return vResult;
 end
@@ -221,6 +247,27 @@ CREATE TABLE segments.list (
     id bigint DEFAULT nextval('segments.segments_seq'::regclass) NOT NULL,
     slug character varying(100) NOT NULL
 );
+
+
+CREATE SEQUENCE segments.actions_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE segments.actions
+(
+    action_id   bigint DEFAULT nextval('segments.actions_seq'::regclass) NOT NULL,
+    action_name varchar(50)                                              NOT NULL,
+
+    CONSTRAINT pk_action PRIMARY KEY (action_id)
+);
+
+CREATE UNIQUE INDEX idx1_action ON segments.actions USING btree (action_name);
+
+INSERT INTO segments.actions (action_name) VALUES ('add');
+INSERT INTO segments.actions (action_name) VALUES ('delete');
 
 
 --
@@ -305,3 +352,40 @@ ALTER TABLE ONLY segments.user_links
 -- PostgreSQL database dump complete
 --
 
+CREATE SEQUENCE segments.history_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE segments.history
+(
+    history_id         bigint DEFAULT nextval('segments.history_seq'::regclass) NOT NULL,
+    user_id    bigint                                                      NOT NULL,
+    segment_id bigint NOT NULL,
+    action_id bigint                                                      NOT NULL,
+    created_at timestamp NOT NULL,
+
+    CONSTRAINT pk_history PRIMARY KEY (history_id),
+    CONSTRAINT fk1_segments FOREIGN KEY (segment_id) REFERENCES segments.list (id),
+    CONSTRAINT fk2_actions FOREIGN KEY (action_id) REFERENCES segments.actions
+);
+
+CREATE INDEX idx1_user ON segments.history USING btree (user_id);
+CREATE INDEX idx2_segment ON segments.history USING btree (segment_id);
+
+
+CREATE FUNCTION operations.get_history(pUser_id bigint, pDateFrom timestamp, pDateTo timestamp) RETURNS
+    TABLE(user_id bigint, slug character varying, action character varying, date timestamp)
+    LANGUAGE plpgsql
+AS $$
+begin
+    return query
+        select sh.user_id, sl.slug, sa.action_name, sh.created_at
+        from segments.history as sh
+                 join segments.actions as sa on sa.action_id = sh.action_id
+                 join segments.list as sl on sl.id = segment_id
+        where sh.user_id = pUser_id and sh.created_at >= pDateFrom and sh.created_at < pDateTo;
+end
+$$;

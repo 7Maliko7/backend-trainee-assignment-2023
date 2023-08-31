@@ -3,6 +3,7 @@ package segments
 import (
 	"context"
 	"fmt"
+	"time"
 
 	svc "github.com/7Maliko7/backend-trainee-assignment-2023/internal/service"
 	"github.com/7Maliko7/backend-trainee-assignment-2023/internal/transport/structs"
@@ -112,5 +113,31 @@ func (s *Service) GetSegments(ctx context.Context, req structs.GetSegmentsReques
 	}
 
 	return &structs.GetSegmentsResponse{Segments: segments}, nil
+}
 
+func (s *Service) GetUserSegmentHistory(ctx context.Context, req structs.GetUserSegmentHistoryRequest) (*structs.GetUserSegmentHistoryResponse, error) {
+	logger := log.With(s.Logger, logKeyMethod, "Get History")
+
+	date, _ := time.Parse("2006-01", req.Period)
+	dateFrom := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, date.Location())
+	date = date.AddDate(0, 1, 0)
+	dateTo := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, date.Location())
+
+	actions, err := s.Repository.GetHistory(ctx, req.UserId, dateFrom, dateTo)
+	if err != nil {
+		level.Error(logger).Log("repository", err.Error())
+		return nil, errors.FailedRequest
+	}
+	level.Debug(logger).Log("Actions count", len(actions))
+
+	if len(actions) == 0 {
+		return nil, errors.DataNotFound
+	}
+
+	result := make([][]string, 0, len(actions))
+	for _, v := range actions {
+		result = append(result, []string{v.UserID, v.Slug, v.Action, v.Date})
+	}
+
+	return &structs.GetUserSegmentHistoryResponse{Actions: result}, nil
 }

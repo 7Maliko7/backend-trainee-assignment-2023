@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"encoding/csv"
 	"encoding/json"
 	"github.com/7Maliko7/backend-trainee-assignment-2023/internal/config"
 	"net/http"
@@ -50,7 +51,7 @@ func NewService(
 
 	userRoute.Methods(http.MethodPost).Path("/{user_id:[0-9]+}/segments").Handler(kithttp.NewServer(
 		svcEndpoints.UpdateUserSegment,
-		decodePatchUserLinkRequest,
+		decodehUserSegmentRequest,
 		encodeResponse,
 		options...,
 	))
@@ -59,6 +60,13 @@ func NewService(
 		svcEndpoints.GetSegments,
 		decodeGetSegmentsRequest,
 		encodeResponse,
+		options...,
+	))
+
+	userRoute.Methods(http.MethodGet).Path("/{user_id:[0-9]+}/segments/history/{period:[0-9]{4}-[0-9]{2}}").Handler(kithttp.NewServer(
+		svcEndpoints.GetUserSegmentHistory,
+		decodeGetUserSegmentHistoryRequest,
+		encodeGetUserSegmentHistoryResponse,
 		options...,
 	))
 
@@ -93,7 +101,7 @@ func decodeDeleteSegmentRequest(_ context.Context, r *http.Request) (request int
 	return req, nil
 }
 
-func decodePatchUserLinkRequest(_ context.Context, r *http.Request) (request interface{}, err error) {
+func decodehUserSegmentRequest(_ context.Context, r *http.Request) (request interface{}, err error) {
 	var req structs.UpdateUserSegmentRequest
 	if err = json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, statusErr.InvalidRequest
@@ -123,6 +131,18 @@ func decodeGetSegmentsRequest(_ context.Context, r *http.Request) (request inter
 	return req, nil
 }
 
+func decodeGetUserSegmentHistoryRequest(_ context.Context, r *http.Request) (request interface{}, err error) {
+	var req structs.GetUserSegmentHistoryRequest
+	vars := mux.Vars(r)
+	req.UserId, err = strconv.ParseInt(vars["user_id"], 10, 64)
+	if err != nil {
+		return nil, statusErr.InvalidRequest
+	}
+	req.Period = vars["period"]
+
+	return req, nil
+}
+
 func encodeResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	if e, ok := response.(errorer); ok && e.error() != nil {
 		encodeErrorResponse(ctx, e.error(), w)
@@ -132,6 +152,21 @@ func encodeResponse(ctx context.Context, w http.ResponseWriter, response interfa
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	return json.NewEncoder(w).Encode(response)
+}
+
+func encodeGetUserSegmentHistoryResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	if e, ok := response.(errorer); ok && e.error() != nil {
+		encodeErrorResponse(ctx, e.error(), w)
+
+		return nil
+	}
+
+	resp, _ := response.(*structs.GetUserSegmentHistoryResponse)
+
+	w.Header().Set("Content-Type", "text/csv; charset=utf-8")
+	w.Header().Set("Content-Disposition", "attachment;filename=report.csv")
+
+	return csv.NewWriter(w).WriteAll(resp.Actions)
 }
 
 type errorer interface {
@@ -152,7 +187,8 @@ func encodeErrorResponse(_ context.Context, err error, w http.ResponseWriter) {
 func codeFrom(err error) int {
 	switch err {
 	case statusErr.SegmentNotFound,
-		statusErr.UserNotFound:
+		statusErr.UserNotFound,
+		statusErr.DataNotFound:
 		return http.StatusNotFound
 	case statusErr.InvalidRequest,
 		statusErr.SegmentExists:

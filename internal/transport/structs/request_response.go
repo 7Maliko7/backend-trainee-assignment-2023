@@ -38,6 +38,16 @@ type UpdateUserSegmentResponse struct {
 type GetSegmentsRequest struct {
 	UserId int64 `json:"user_id,omitempty"`
 }
+
 type GetSegmentsResponse struct {
 	Segments []string `json:"segments,omitempty"`
+}
+
+type GetUserSegmentHistoryRequest struct {
+	UserId int64  `json:"user_id,omitempty"`
+	Period string `json:"period,omitempty"`
+}
+
+type GetUserSegmentHistoryResponse struct {
+	Actions [][]string
 }

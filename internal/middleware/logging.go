@@ -51,3 +51,10 @@ func (mw loggingMiddleware) GetSegments(ctx context.Context, req structs.GetSegm
 	}(time.Now())
 	return mw.next.GetSegments(ctx, req)
 }
+
+func (mw loggingMiddleware) GetUserSegmentHistory(ctx context.Context, req structs.GetUserSegmentHistoryRequest) (*structs.GetUserSegmentHistoryResponse, error) {
+	defer func(begin time.Time) {
+		mw.logger.Log("method", "GetUserSegmentHistory", "duration", time.Since(begin), "err")
+	}(time.Now())
+	return mw.next.GetUserSegmentHistory(ctx, req)
+}
